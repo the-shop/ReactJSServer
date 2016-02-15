@@ -75,6 +75,8 @@ class HttpHelpers {
         });
 
         html = html.replace('{{SERVER_RENDER}}', markup);
+        // TODO: remove hardcoded application "main" when separate app build is available
+        html = html.replace('{{APPLICATION_NAME}}', 'main');
         HttpHelpers.write(html, 'text/html', res);
     }
 }
