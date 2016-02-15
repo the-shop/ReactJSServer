@@ -5,10 +5,7 @@ class Index extends React.Component {
         return (
             <div>
                 <p>
-                    Documentation is available inside main
-                    <a href="https://github.com/the-shop/ReactJSServer/blob/master/README.md" target="_blank">
-                        GitHub repository README
-                    </a>.
+                    Documentation is available inside main <a href="https://github.com/the-shop/ReactJSServer/blob/master/README.md" target="_blank">GitHub repository README</a>.
                 </p>
             </div>
         )
