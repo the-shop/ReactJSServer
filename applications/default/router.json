@@ -1,0 +1,9 @@
+{
+  "path": "/",
+  "component": "App",
+  "childRoutes": [
+  ],
+  "indexRoute": {
+    "component": "Index"
+  }
+}
