@@ -12,14 +12,14 @@ You can start the application by running `npm start`.
 Once you start it, default application will be accessible at [http://localhost:80](http://localhost:80) if nothing is 
 using the port.
 
+## Configuration
+Out of the box, supported environments are `staging` and `production`. Additional config files can be added to 
+`config/` directory. You can change the port number and number of CPU cores to use per environment in configuration files.
+
 ### Environments and configurations
 `NODE_ENV` environment variable is parsed to determine the configuration file to be loaded. 
 
 Development environment is the default one.
-
-## Configuration
-Supported `staging` and `production`, additional files can be added to `config/` directory.
-You can change the port number and number of CPU cores to use per environment in configuration files.
 
 ## Changelog
 ### Version 0.1.0
