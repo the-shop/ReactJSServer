@@ -37,27 +37,40 @@ class Server {
      * @returns {boolean}
      */
     handle(req, res) {
+        var applicationName = this.getApplication().resolveApplicationName(req.headers.host),
+          appConfigPath = './applications/' + applicationName + '/config.json',
+          routes = Router.getRoutes(applicationName),
+          location = req.url,
+          appConfig = {};
+
+        // TODO: cache loaded config files
+        if (fs.existsSync(appConfigPath)) {
+            appConfig = JSON.parse(fs.readFileSync(appConfigPath, 'utf8'));
+        }
+
         // Handle favicon request
-        if (req.url === '/favicon.ico') {
+        if (location === '/favicon.ico') {
             HttpHelpers.write('', 'image/x-icon', res);
             return true;
         }
 
+        // Handle API proxy calls
+        if (location.match('^' + this.getConfiguration().get('api.apiCallsPrefix') + '.*')) {
+            if (appConfig.apiHost) {
+                return HttpHelpers.proxyApiRequest(appConfig.apiHost, req.url, req, res);
+            }
+            console.error('Api call detected but "apiHost" configuration property missing.');
+        }
+
         // Handle static JS requests
         var buildDirRegex = new RegExp('build');
-        if (buildDirRegex.test(req.url)) {
+        if (buildDirRegex.test(location)) {
             // TODO: test CSS support
             fs.readFile(`.${req.url}`, (err, data) => {
                 HttpHelpers.write(data, 'text/javascript', res);
             });
             return true;
         }
-
-        var applicationName = this.getApplication().resolveApplicationName(req.headers.host);
-
-        // Handle all other requests
-        var routes = Router.getRoutes(applicationName),
-            location = req.url;
 
         match({routes, location}, (error, redirectLocation, renderProps) => {
             if (error) {
