@@ -50,13 +50,17 @@ class HttpHelpers {
    * @param type
    * @param res
    */
-  static write(string, type, res) {
+  static write(string, type, res, responseHeaders = {}) {
     zlib.gzip(string, (err, result) => {
-      res.writeHead(200, {
-        'Content-Length': result.length,
-        'Content-Type': type,
-        'Content-Encoding': 'gzip'
-      });
+      var headers = Object.assign(
+        {},
+        responseHeaders,
+        {
+          'Content-Length': result.length,
+          'Content-Type': type,
+          'Content-Encoding': 'gzip'
+        });
+      res.writeHead(200, headers);
       res.write(result);
       res.end();
     });
@@ -91,11 +95,14 @@ class HttpHelpers {
         responseBody += chunk;
       });
 
+      var responseHeaders = apiRes.headers;
+
       apiRes.on('end', () => {
         HttpHelpers.write(
           responseBody,
           apiRes.headers['Content-Type'] ? apiRes.headers['Content-Type'] : 'text/plain',
-          res
+          res,
+          responseHeaders
         );
       });
     }).end();
@@ -110,8 +117,8 @@ class HttpHelpers {
    * @param renderProps
    * @param res
    */
-  static renderPage(applicationName, renderProps, res) {
-    var markup = ReactDOM.renderToString(<RoutingContext {...renderProps}/>);
+  static renderPage(applicationName, renderProps, req, res) {
+    var markup = ReactDOM.renderToString(<RoutingContext {...renderProps} />);
     var html = fs.readFileSync(`./applications/${applicationName}/index.html`, 'utf8', (err) => {
       if (err) {
         throw err;

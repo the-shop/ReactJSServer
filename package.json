@@ -13,21 +13,33 @@
   "bugs": {
     "url": "http://github.com/the-shop/ReactJSServer/issues"
   },
-  "keywords": ["reactjs", "nodejs", "server"],
+  "keywords": [
+    "reactjs",
+    "nodejs",
+    "server"
+  ],
   "version": "0.1.0",
   "license": "GPL-3.0",
   "main": "client.js",
   "dependencies": {
+    "axios": "^0.12.0",
     "babel": "^5.8.34",
     "babel-core": "^5.8.34",
     "babel-loader": "^5.4.0",
+    "body-parser": "^1.15.2",
     "config-js": "^1.1.9",
+    "express": "^4.14.0",
     "history": "^1.17.0",
     "html-loader": "^0.4.0",
+    "http-proxy": "^1.14.0",
     "json-loader": "^0.5.4",
     "react": "~0.14.7",
+    "react-cookie": "^0.4.7",
     "react-dom": "^0.14.7",
     "react-router": "^1.0.3",
+    "redux": "^3.5.2",
+    "redux-promise": "^0.5.3",
+    "redux-thunk": "^2.1.0",
     "webpack": "^1.12.13"
   },
   "_npmVersion": "3.3.12",

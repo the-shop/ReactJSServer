@@ -1,8 +1,9 @@
-import http from 'http'
 import { match } from 'react-router'
 import fs from 'fs'
 import HttpHelpers from './HttpHelpers'
 import Router from './Router'
+import express from 'express';
+import bodyParser from 'body-parser';
 
 /**
  * Responsible for http request handling logic
@@ -22,11 +23,44 @@ class Server {
      * Main server application entry point
      */
     run() {
-        http.createServer((req, res) => {
-            this.handle(req, res);
-        }).listen(this.getPort());
+        const app = express();
+
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({
+            extended: true
+        }));
+
+        // Handle favicon request
+        app.get('/favicon.ico', function (req, res) {
+            HttpHelpers.write('', 'image/x-icon', res);
+        });
+
+        // Handle API proxy calls
+
+        app.all('/api*', this.handleApiRequest.bind(this));
+
+        app.all('*', this.handle.bind(this));
+
+        app.listen(this.getPort());
 
         console.log(`Server process ${process.pid} started on port ${this.getPort()}`);
+    }
+
+    handleApiRequest(req, res) {
+        var applicationName = this.getApplication().resolveApplicationName(req.headers.host),
+          appConfigPath = './applications/' + applicationName + '/config.json',
+          appConfig = {};
+
+        // TODO: cache loaded config files
+        if (fs.existsSync(appConfigPath)) {
+            appConfig = JSON.parse(fs.readFileSync(appConfigPath, 'utf8'));
+        }
+
+        if (appConfig.apiHost) {
+            console.log('Proxy request for ' + req.url + ' path.');
+            return HttpHelpers.proxyApiRequest(appConfig.apiHost, req.url, req, res);
+        }
+        console.error('Api call detected but "apiHost" configuration property missing.');
     }
 
     /**
@@ -38,35 +72,14 @@ class Server {
      */
     handle(req, res) {
         var applicationName = this.getApplication().resolveApplicationName(req.headers.host),
-          appConfigPath = './applications/' + applicationName + '/config.json',
           routes = Router.getRoutes(applicationName),
-          location = req.url,
-          appConfig = {};
-
-        // TODO: cache loaded config files
-        if (fs.existsSync(appConfigPath)) {
-            appConfig = JSON.parse(fs.readFileSync(appConfigPath, 'utf8'));
-        }
-
-        // Handle favicon request
-        if (location === '/favicon.ico') {
-            HttpHelpers.write('', 'image/x-icon', res);
-            return true;
-        }
-
-        // Handle API proxy calls
-        if (location.match('^' + this.getConfiguration().get('api.apiCallsPrefix') + '.*')) {
-            if (appConfig.apiHost) {
-                return HttpHelpers.proxyApiRequest(appConfig.apiHost, req.url, req, res);
-            }
-            console.error('Api call detected but "apiHost" configuration property missing.');
-        }
+          location = req.url;
 
         // Handle static JS requests
         var buildDirRegex = new RegExp('build');
         if (buildDirRegex.test(location)) {
             // TODO: test CSS support
-            fs.readFile(`.${req.url}`, (err, data) => {
+            fs.readFile(`.${location}`, (err, data) => {
                 HttpHelpers.write(data, 'text/javascript', res);
             });
             return true;
@@ -78,7 +91,7 @@ class Server {
             } else if (redirectLocation) {
                 HttpHelpers.redirect(redirectLocation, res);
             } else if (renderProps) {
-                HttpHelpers.renderPage(applicationName, renderProps, res);
+                HttpHelpers.renderPage(applicationName, renderProps, req, res);
             } else {
                 HttpHelpers.routeNotFound(res);
             }
