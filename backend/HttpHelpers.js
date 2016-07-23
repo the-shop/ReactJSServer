@@ -49,8 +49,10 @@ class HttpHelpers {
    * @param string
    * @param type
    * @param res
+   * @param statusCode
+   * @param responseHeaders
    */
-  static write(string, type, res, responseHeaders = {}) {
+  static write(string, type, res, statusCode = 200, responseHeaders = {}) {
     zlib.gzip(string, (err, result) => {
       var headers = Object.assign(
         {},
@@ -60,7 +62,7 @@ class HttpHelpers {
           'Content-Type': type,
           'Content-Encoding': 'gzip'
         });
-      res.writeHead(200, headers);
+      res.writeHead(statusCode, headers);
       res.write(result);
       res.end();
     });
@@ -96,12 +98,14 @@ class HttpHelpers {
       });
 
       var responseHeaders = apiRes.headers;
+      var responseStatusCode = apiRes.statusCode;
 
       apiRes.on('end', () => {
         HttpHelpers.write(
           responseBody,
           apiRes.headers['Content-Type'] ? apiRes.headers['Content-Type'] : 'text/plain',
           res,
+          responseStatusCode,
           responseHeaders
         );
       });
