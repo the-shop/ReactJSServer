@@ -4,6 +4,7 @@ import fs from 'fs'
 import React from 'react'
 import ReactDOM from 'react-dom/server'
 import { RoutingContext } from 'react-router'
+import request from 'request';
 
 /**
  * Class of helpers for http module
@@ -84,32 +85,20 @@ class HttpHelpers {
       originalHeaders.host = apiHost;
     }
 
-    var options = {
-      path: path,
-      method: req.method,
+    request({
+      url: 'http://' + apiHost + path,
+      method: req.method.toUpperCase(),
       headers: originalHeaders,
-      host: apiHost,
-    };
-
-    http.request(options, function(apiRes) {
-      var responseBody = '';
-      apiRes.on('data', (chunk) => {
-        responseBody += chunk;
-      });
-
-      var responseHeaders = apiRes.headers;
-      var responseStatusCode = apiRes.statusCode;
-
-      apiRes.on('end', () => {
-        HttpHelpers.write(
-          responseBody,
-          apiRes.headers['Content-Type'] ? apiRes.headers['Content-Type'] : 'text/plain',
-          res,
-          responseStatusCode,
-          responseHeaders
-        );
-      });
-    }).end();
+      body: req.body ? JSON.stringify(req.body) : undefined
+    }, function (error, response, body) {
+      HttpHelpers.write(
+        body,
+        response.headers['Content-Type'] ? response.headers['Content-Type'] : 'text/plain',
+        res,
+        response.statusCode,
+        response.headers
+      );
+    });
 
     return true;
   }

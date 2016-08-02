@@ -42,6 +42,7 @@
     "redux": "^3.5.2",
     "redux-promise": "^0.5.3",
     "redux-thunk": "^2.1.0",
+    "request": "^2.74.0",
     "webpack": "^1.12.13"
   },
   "_npmVersion": "3.3.12",

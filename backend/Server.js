@@ -57,7 +57,7 @@ class Server {
         }
 
         if (appConfig.apiHost) {
-            console.log('Proxy request for ' + req.url + ' path.');
+            console.log('Proxy request for [' + req.method + '] ' + req.url + ' path.');
             return HttpHelpers.proxyApiRequest(appConfig.apiHost, req.url, req, res);
         }
         console.error('Api call detected but "apiHost" configuration property missing.');
