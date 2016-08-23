@@ -1,9 +1,8 @@
-import http from 'http'
-import zlib from 'zlib'
-import fs from 'fs'
-import React from 'react'
-import ReactDOM from 'react-dom/server'
-import { RoutingContext } from 'react-router'
+import zlib from 'zlib';
+import fs from 'fs';
+import React from 'react';
+import ReactDOM from 'react-dom/server';
+import { RouterContext } from 'react-router';
 import request from 'request';
 
 /**
@@ -55,7 +54,7 @@ class HttpHelpers {
    */
   static write(string, type, res, statusCode = 200, responseHeaders = {}) {
     zlib.gzip(string, (err, result) => {
-      var headers = Object.assign(
+      const headers = Object.assign(
         {},
         responseHeaders,
         {
@@ -79,7 +78,7 @@ class HttpHelpers {
    * @returns {boolean}
    */
   static proxyApiRequest(apiHost, path, req, res) {
-    var originalHeaders = req.headers;
+    const originalHeaders = req.headers || {};
 
     if (originalHeaders.host) {
       originalHeaders.host = apiHost;
@@ -111,8 +110,8 @@ class HttpHelpers {
    * @param res
    */
   static renderPage(applicationName, renderProps, req, res) {
-    var markup = ReactDOM.renderToString(<RoutingContext {...renderProps} />);
-    var html = fs.readFileSync(`./applications/${applicationName}/index.html`, 'utf8', (err) => {
+    const markup = ReactDOM.renderToString(<RouterContext {...renderProps} />);
+    let html = fs.readFileSync(`./applications/${applicationName}/index.html`, 'utf8', (err) => {
       if (err) {
         throw err;
       }

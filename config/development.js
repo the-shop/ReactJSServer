@@ -1,11 +1,9 @@
-var config = {
+export default {
     application: {
-        port: 80,
+        port: 3000,
         numCPUs: 1
     },
     api: {
         apiCallsPrefix: '/api/'
     }
 };
-
-module.exports = config;

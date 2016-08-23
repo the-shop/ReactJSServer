@@ -1,20 +1,19 @@
-import React from 'react'
-import { match, Router as ReactRouter } from 'react-router'
-import { render } from 'react-dom'
-import { createHistory } from 'history'
-import Router from './backend/Router'
-import Application from './backend/Application'
+import React from 'react';
+import { match, Router as ReactRouter, browserHistory } from 'react-router';
+import { render } from 'react-dom';
+import Router from './backend/Router';
+import Application from './backend/Application';
 
 const { pathname, search, hash } = window.location;
 const location = `${pathname}${search}${hash}`;
 
-var app = new Application(),
-    applicationName = app.resolveApplicationName(window.location.host),
-    routes = Router.getRoutes(applicationName);
+const app = new Application();
+const applicationName = app.resolveApplicationName(window.location.host);
+const routes = Router.getRoutes(applicationName);
 
 match({ routes, location }, () => {
     render(
-        <ReactRouter routes={routes} history={createHistory()} />,
+        <ReactRouter routes={routes} history={browserHistory} />,
         document.getElementById('app')
     );
 });

@@ -17,10 +17,11 @@ class Application {
      * @returns {*}
      */
     resolveApplicationName(host) {
-        var applicationName = host;
+        const parts = host.split(':');
+        const applicationName = parts[0];
 
-        if (this.cachedApplications[applicationName]) {
-            return this.cachedApplications[applicationName];
+        if (this.cachedApplications[host]) {
+            return this.cachedApplications[host];
         }
 
         // Check if router is defined for given host and if not, fallback to "default" application
@@ -31,9 +32,9 @@ class Application {
             host = 'default';
         }
 
-        this.cachedApplications[applicationName] = host;
+        this.cachedApplications[host] = applicationName;
 
-        return host;
+        return applicationName;
     }
 }
 
