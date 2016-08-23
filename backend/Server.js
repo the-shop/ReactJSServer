@@ -4,6 +4,9 @@ import HttpHelpers from './HttpHelpers';
 import Router from './Router';
 import express from 'express';
 import bodyParser from 'body-parser';
+import webpack from 'webpack';
+import webpackConfig from '../webpack.config';
+const compiler = webpack(webpackConfig);
 
 /**
  * Responsible for http request handling logic
@@ -29,6 +32,12 @@ class Server {
     app.use(bodyParser.urlencoded({
       extended: true
     }));
+
+    app.use(require("webpack-dev-middleware")(compiler, {
+      noInfo: true, publicPath: webpackConfig.output.publicPath
+    }));
+
+    app.use(require("webpack-hot-middleware")(compiler));
 
     // Handle favicon request
     app.get('/favicon.ico', function (req, res) {

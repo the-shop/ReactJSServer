@@ -2,10 +2,10 @@
   "name": "react-js-server",
   "description": "NodeJS application serves as ReactJS server.",
   "scripts": {
-    "start": "webpack --progress && babel-node server.js",
+    "start": "webpack --hot --progress && babel-node server.js",
     "lint": "eslint -c .eslintrc.json applications ./"
   },
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "GPL-3.0",
   "main": "client.js",
   "dependencies": {
@@ -35,9 +35,15 @@
     "webpack": "^1.13.2"
   },
   "devDependencies": {
+    "babel-plugin-react-transform": "^2.0.2",
+    "babel-preset-react-hmre": "^1.1.1",
     "eslint": "^3.3.1",
     "eslint-plugin-import": "^1.14.0",
-    "eslint-plugin-react": "^6.1.2"
+    "eslint-plugin-react": "^6.1.2",
+    "react-transform-catch-errors": "^1.0.2",
+    "react-transform-hmr": "^1.0.4",
+    "webpack-dev-middleware": "^1.6.1",
+    "webpack-hot-middleware": "^2.12.2"
   },
   "_npmVersion": "3.8.3",
   "_nodeVersion": "5.5.0",
