@@ -84,11 +84,18 @@ class Server {
     const location = req.url;
 
     // Handle static JS requests
-    const buildDirRegex = new RegExp('build');
-    if (buildDirRegex.test(location)) {
-      // TODO: test CSS support
+    const jsRegex = new RegExp('build/.*\.js');
+    if (jsRegex.test(location)) {
       fs.readFile(`.${location}`, (err, data) => {
         HttpHelpers.write(data, 'text/javascript', res);
+      });
+      return true;
+    }
+
+    const cssRegex = new RegExp('build/.*\.css');
+    if (cssRegex.test(location)) {
+      fs.readFile(`.${location}`, (err, data) => {
+        HttpHelpers.write(data, 'text/css', res);
       });
       return true;
     }

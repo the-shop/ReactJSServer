@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const GLOBALS = {
   'process.env.NODE_ENV': JSON.stringify('development'),
@@ -22,10 +23,11 @@ var config = {
   },
   inline: true,
   lazy: false,
-  stats: {colors: true},
-  node: {
-    fs: "empty"
+  stats: {
+    colors: true
   },
+  noInfo: true, // set to false to see a list of every file being bundled.
+  quiet: true,
   module: {
     loaders: [
       {
@@ -45,6 +47,28 @@ var config = {
         test: /\.html$/,
         exclude: [/node_modules/],
         loader: 'html-loader'
+      },
+      {
+        test: /.eot(\?v=\d+.\d+.\d+)?$/, loader: 'file'
+      },
+      {
+        test: /.(woff|woff2)$/, loader: 'file-loader?prefix=font/&limit=5000'
+      },
+      {
+        test: /.ttf(\?v=\d+.\d+.\d+)?$/, loader: 'file-loader?limit=10000&mimetype=application/octet-stream'
+      },
+      {
+        test: /.svg(\?v=\d+.\d+.\d+)?$/, loader: 'file-loader?limit=10000&mimetype=image/svg+xml'
+      },
+      {
+        test: /\.(jpe?g|png|gif)$/i, loaders: ['file']
+      },
+      {
+        test: /\.ico$/, loader: 'file-loader?name=[name].[ext]'
+      },
+      {
+        test: /\.scss$/,
+        loader: ExtractTextPlugin.extract('css!sass')
       }
     ]
   },
@@ -53,7 +77,10 @@ var config = {
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new ExtractTextPlugin('style.css', {
+      allChunks: true
+    })
   ]
 };
 
