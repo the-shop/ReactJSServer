@@ -13,7 +13,7 @@ var config = {
     'webpack-hot-middleware/client',
     'webpack/hot/dev-server'
   ],
-  devtool: 'cheap-module-eval-source-map', // more info:https://webpack.github.io/docs/build-performance.html#sourcemaps and https://webpack.github.io/docs/configuration.html#devtool
+  devtool: 'eval-source-map',
   target: 'web', // necessary per https://webpack.github.io/docs/testing.html#compile-and-test
   output: {
     path: __dirname + '/build',

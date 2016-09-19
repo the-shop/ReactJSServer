@@ -3,7 +3,7 @@
   "description": "NodeJS application serves as ReactJS server.",
   "scripts": {
     "start": "webpack --hot --progress && babel-node server.js",
-    "lint": "eslint -c .eslintrc.json applications ./"
+    "lint": "eslint -c .eslintrc.json applications"
   },
   "version": "0.1.2",
   "license": "GPL-3.0",
