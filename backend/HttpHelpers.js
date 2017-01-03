@@ -90,6 +90,16 @@ class HttpHelpers {
       headers: originalHeaders,
       body: req.body ? JSON.stringify(req.body) : undefined
     }, function (error, response, body) {
+      if (error) {
+        console.log(error);
+        HttpHelpers.write(
+          JSON.stringify({'error': true, 'message': 'Internal server error: ' + error}),
+          'application/json',
+          res,
+          response.statusCode,
+          response.headers
+        );
+      }
       HttpHelpers.write(
         body,
         response.headers['Content-Type'] ? response.headers['Content-Type'] : 'text/plain',
