@@ -3,7 +3,6 @@ import fs from 'fs';
 import HttpHelpers from './HttpHelpers';
 import Router from './Router';
 import express from 'express';
-import bodyParser from 'body-parser';
 import webpack from 'webpack';
 import webpackConfig from '../webpack.config';
 const compiler = webpack(webpackConfig);
@@ -28,11 +27,6 @@ class Server {
   run() {
     const app = express();
 
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({
-      extended: true
-    }));
-
     app.use(require("webpack-dev-middleware")(compiler, {
       noInfo: true, publicPath: webpackConfig.output.publicPath
     }));
@@ -45,7 +39,6 @@ class Server {
     });
 
     // Handle API proxy calls
-
     app.all('/api*', this.handleApiRequest.bind(this));
 
     app.all('*', this.handle.bind(this));
@@ -55,7 +48,7 @@ class Server {
     console.log(`Server process ${process.pid} started on port ${this.getPort()}`);
   }
 
-  handleApiRequest(req, res) {
+  handleApiRequest(req, res, body) {
     const applicationName = this.getApplication().resolveApplicationName(req.headers.host);
     const appConfigPath = './applications/' + applicationName + '/config.json';
     let appConfig = {};
@@ -67,8 +60,9 @@ class Server {
 
     if (appConfig.apiHost) {
       console.log('Proxy request for [' + req.method + '] ' + req.url + ' path.');
-      return HttpHelpers.proxyApiRequest(appConfig.apiHost, req.url, req, res);
+      return HttpHelpers.proxyApiRequest(appConfig.apiHost, req.url, req, res, body);
     }
+
     console.error('Api call detected but "apiHost" configuration property missing.');
   }
 

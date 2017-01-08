@@ -78,38 +78,7 @@ class HttpHelpers {
    * @returns {boolean}
    */
   static proxyApiRequest(apiHost, path, req, res) {
-    const originalHeaders = req.headers || {};
-
-    if (originalHeaders.host) {
-      originalHeaders.host = apiHost;
-    }
-
-    request({
-      url: 'http://' + apiHost + path,
-      method: req.method.toUpperCase(),
-      headers: originalHeaders,
-      body: req.body ? JSON.stringify(req.body) : undefined
-    }, function (error, response, body) {
-      if (error) {
-        console.log(error);
-        HttpHelpers.write(
-          JSON.stringify({'error': true, 'message': 'Internal server error: ' + error}),
-          'application/json',
-          res,
-          response.statusCode,
-          response.headers
-        );
-      }
-      HttpHelpers.write(
-        body,
-        response.headers['Content-Type'] ? response.headers['Content-Type'] : 'text/plain',
-        res,
-        response.statusCode,
-        response.headers
-      );
-    });
-
-    return true;
+    req.pipe(request('http://' + apiHost + path)).pipe(res);
   }
 
   /**
