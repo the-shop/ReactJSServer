@@ -40,7 +40,6 @@ var config = {
       },
       {
         test: /\.json$/,
-        exclude: [/node_modules/],
         loader: 'json-loader'}
         ,
       {
