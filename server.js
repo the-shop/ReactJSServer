@@ -4,14 +4,14 @@ import Server from './backend/Server';
 import Application from './backend/Application';
 
 const environment = process.env.NODE_ENV || 'development';
-
 const configuration = require('./config/' + environment);
 const app = new Application();
 const server = new Server(configuration, app);
 
 // Fork only if config wants more than one core
-if (cluster.isMaster && configuration.application && configuration.application.numCPUs > 1) {
-  for (let i = 0; i < configuration.application.numCPUs; i++) {
+if (cluster.isMaster && configuration.default.application && configuration.default.application.numCPUs) {
+  console.log('Starting ' + configuration.default.application.numCPUs + ' processes');
+  for (let i = 0; i < configuration.default.application.numCPUs; i++) {
     cluster.fork();
   }
 
@@ -22,5 +22,10 @@ if (cluster.isMaster && configuration.application && configuration.application.n
   });
 } else {
   server.run();
+  // Log the uncaughtException and exit, let the cluster create new fork
+  process.on('uncaughtException', function (err) {
+    console.error((new Date).toUTCString() + ' uncaughtException:', err.message);
+    console.error(err.stack);
+    process.exit(1);
+  });
 }
-
