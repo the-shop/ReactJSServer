@@ -2,3 +2,5 @@
 node_modules/
 build/
 npm-debug.log
+.env
+newrelic_agent.log

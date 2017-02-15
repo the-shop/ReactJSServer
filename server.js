@@ -1,4 +1,5 @@
 import cluster from 'cluster';
+import 'newrelic';
 import Server from './backend/Server';
 import Application from './backend/Application';
 
