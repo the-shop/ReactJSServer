@@ -3,7 +3,7 @@
 echo -e "\n\n\n###################################### Setup.sh ######################################\n"
 echo -e "\n\n\n###################################### Clone Platform ######################################\n"
 cd /var/www/ReactJSServer/applications
-git clone gh-deploy:the-shop/platform.git platform.the-shop.io
+git clone -b master gh-deploy:the-shop/platform.git platform.the-shop.io
 cd ..
 export LC_ALL=C
 export NVM_DIR="$HOME/.nvm"
